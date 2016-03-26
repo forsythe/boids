@@ -73,14 +73,6 @@ void CSDLManagerLite::setColor(int r, int g, int b, int alpha) {
     SDL_SetRenderDrawColor(m_pRenderer, r, g, b, alpha);
 }
 
-void CSDLManagerLite::drawRectTLCorner(float x, float y, float width, float height) {
-    SDL_Rect rec;
-    rec.x = x;
-    rec.y = y;
-    rec.w = width;
-    rec.h = height;
-    SDL_RenderFillRect(m_pRenderer, &rec);
-}
 /*
 |\
 | \

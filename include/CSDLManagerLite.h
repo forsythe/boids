@@ -19,7 +19,6 @@ public:
 
     void delay(int);
     void clean();
-    void drawRectTLCorner(float, float, float, float);
     void drawRectCenter(float, float, float, float);
     void drawTriangle(float, float, float, float, float);
     void drawCircle(int, int, float);

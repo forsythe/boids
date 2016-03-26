@@ -11,7 +11,9 @@
 #define bWIDTH 30
 #define bHEIGHT 15
 
-#define NUM_BOIDS 10
+#define NUM_BOIDS 40
 #define BOID_RADIUS 60
+
+#define W_COHESION 1 //weight
 
 #endif // DEFS_H_INCLUDED

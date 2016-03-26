@@ -3,15 +3,14 @@
 
 #include "Boid.h"
 
-class Flock
-{
-    public:
-        Flock(int);
-        int num;
-        std::vector<Boid> boids;
+class Flock {
+public:
+    Flock(int);
+    int num;
+    std::vector<Boid> boids;
 
-        void update();
-        void draw();
+    void update();
+    void draw();
 
 };
 
