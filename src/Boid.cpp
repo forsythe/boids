@@ -19,19 +19,31 @@ Boid::Boid() {
     pos[1] = rand()%HEIGHT;
     vel[0] = (100-(rand()%200))/100.0;
     vel[1] = (100-(rand()%200))/100.0;
-    cout << vel[0] << " " << vel[1] << endl;
 }
 
 void Boid::draw() {
     CSDLManagerLite::getInstance() -> drawTriangle(pos[0], pos[1], bWIDTH, bHEIGHT, theta);
-    CSDLManagerLite::getInstance() -> drawCircle(pos[0], pos[1], BOID_RADIUS);
+    if (DRAW_RADIUS) {
+        CSDLManagerLite::getInstance() -> drawCircle(pos[0], pos[1], BOID_RADIUS);
+        CSDLManagerLite::getInstance() -> drawCircle(pos[0], pos[1], SEPARATION_BOID_RADIUS);
+    }
 
-    CSDLManagerLite::getInstance() -> drawCircle(targetPos[0], targetPos[1], 10);
-    CSDLManagerLite::getInstance() -> drawLine(pos[0], pos[1], targetPos[0], targetPos[1]);
+    if (DRAW_VECTOR) {
+        CSDLManagerLite::getInstance() -> drawCircle(cohesionTargetPos[0], cohesionTargetPos[1], 10);
+        CSDLManagerLite::getInstance() -> drawLine(pos[0], pos[1], cohesionTargetPos[0], cohesionTargetPos[1]);
+
+        CSDLManagerLite::getInstance() -> drawCircle(separationTargetPos[0], separationTargetPos[1], 10);
+        CSDLManagerLite::getInstance() -> drawLine(pos[0], pos[1], separationTargetPos[0], separationTargetPos[1]);
+
+        }
+        CSDLManagerLite::getInstance() -> drawCircle(alignmentTargetPos[0], alignmentTargetPos[1], 10);
+        CSDLManagerLite::getInstance() -> drawLine(pos[0], pos[1], alignmentTargetPos[0], alignmentTargetPos[1]);
+
 }
 
 void Boid::update() {
-    steerTo(targetPos[0], targetPos[1]);
+    steerTo(cohesionTargetPos[0]*W_COHESION + separationTargetPos[0]*W_SEPARATION + alignmentTargetPos[0]*W_ALIGNMENT,
+            cohesionTargetPos[1]*W_COHESION + separationTargetPos[1]*W_SEPARATION + alignmentTargetPos[1]*W_ALIGNMENT);
 
     //cout << targetPos[0] << " " << targetPos[1] << endl;
 
@@ -50,9 +62,15 @@ void Boid::update() {
         theta += 2*PI;
 }
 
-void Boid::addToTargetPosBuffer(float x, float y){
+void Boid::addToTargetPosBuffer(float x, float y) {
     targetPosBuffer[0] += x;
     targetPosBuffer[1] += y;
+}
+
+void Boid::clearBuffer() {
+    numNeighbors = 0;
+    targetPosBuffer[0] = 0;
+    targetPosBuffer[1] = 0;
 }
 
 void Boid::steerTo(float tx, float ty) {
@@ -70,11 +88,10 @@ void Boid::steerTo(float tx, float ty) {
             moveAngle = theta + TURN_INCREMENT;
         else
             moveAngle = theta - TURN_INCREMENT;
+    else if (theta - toAngle <= PI)
+        moveAngle = theta - TURN_INCREMENT;
     else
-        if (theta - toAngle <= PI)
-            moveAngle = theta - TURN_INCREMENT;
-        else
-            moveAngle = theta + TURN_INCREMENT;
+        moveAngle = theta + TURN_INCREMENT;
 
     vel[0] = cos(moveAngle);
     vel[1] = -sin(moveAngle);

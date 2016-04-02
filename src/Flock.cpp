@@ -22,12 +22,10 @@ float getDist(Boid a, Boid b) {
 void Flock::update() {
 
     for (int k = 0; k < num; k++) {
-        boids[k].targetPosBuffer[0] = 0; //Clear previous target position
-        boids[k].targetPosBuffer[1] = 0;
-        boids[k].numNeighbors = 0;
+        boids[k].clearBuffer();
     }
 
-    //Cohesion
+    /**********************Cohesion**********************/
     for (int k = 0; k < num; k++) {
         for (int j = k + 1; j < num; j++) {
             if (getDist(boids[k], boids[j]) < BOID_RADIUS) {
@@ -39,20 +37,78 @@ void Flock::update() {
         }
     }
 
-    for (int k = 0; k < num; k++){
-        if (boids[k].numNeighbors > 0){
-            boids[k].targetPos[0] = W_COHESION * boids[k].targetPosBuffer[0]/boids[k].numNeighbors;
-            boids[k].targetPos[1] = W_COHESION * boids[k].targetPosBuffer[1]/boids[k].numNeighbors;
+    for (int k = 0; k < num; k++) {
+        if (boids[k].numNeighbors > 0) {
+            boids[k].cohesionTargetPos[0] = boids[k].targetPosBuffer[0]/boids[k].numNeighbors;
+            boids[k].cohesionTargetPos[1] = boids[k].targetPosBuffer[1]/boids[k].numNeighbors;
         } else {
-            boids[k].targetPos[0] = boids[k].pos[0];
-            boids[k].targetPos[1] = boids[k].pos[1];
+            boids[k].cohesionTargetPos[0] = boids[k].pos[0];
+            boids[k].cohesionTargetPos[1] = boids[k].pos[1];
         }
     }
 
-    //Adhesion
+    /**********************Separation**********************/
+    for (int k = 0; k < num; k++) {
+        boids[k].clearBuffer();
+    }
 
-    //Alignment
+    for (int k = 0; k < num; k++) {
+        for (int j = k + 1; j < num; j++) {
+            if (getDist(boids[k], boids[j]) < SEPARATION_BOID_RADIUS) {
+                boids[k].numNeighbors++;
+                boids[j].numNeighbors++;
+                boids[k].addToTargetPosBuffer(boids[j].pos[0], boids[j].pos[1]);
+                boids[j].addToTargetPosBuffer(boids[k].pos[0], boids[k].pos[1]);
+            }
+        }
+    }
 
+    for (int k = 0; k < num; k++) {
+        if (boids[k].numNeighbors > 0) {
+            if (boids[k].targetPosBuffer[0]/boids[k].numNeighbors != boids[k].pos[0]) { //prevent divide by 0
+                boids[k].separationTargetPos[0] = boids[k].pos[0] -
+                                                  1000/(boids[k].targetPosBuffer[0]/boids[k].numNeighbors - boids[k].pos[0]);
+            }
+            if (boids[k].targetPosBuffer[1]/boids[k].numNeighbors != boids[k].pos[1]) { //prevent divide by 0
+                boids[k].separationTargetPos[1] = boids[k].pos[1] -
+                                                  1000/(boids[k].targetPosBuffer[1]/boids[k].numNeighbors - boids[k].pos[1]);
+            }
+        } else {
+            boids[k].separationTargetPos[0] = boids[k].pos[0];
+            boids[k].separationTargetPos[1] = boids[k].pos[1];
+        }
+    }
+    /**********************Alignment**********************/
+    for (int k = 0; k < num; k++) {
+        boids[k].clearBuffer();
+        boids[k].sumNeighborTheta = 0;
+    }
+
+     for (int k = 0; k < num; k++) {
+        for (int j = k + 1; j < num; j++) {
+            if (getDist(boids[k], boids[j]) < BOID_RADIUS) {
+                boids[k].numNeighbors++;
+                boids[j].numNeighbors++;
+                boids[k].sumNeighborTheta += boids[j].theta;
+                boids[j].sumNeighborTheta += boids[k].theta;
+            }
+        }
+    }
+
+    for (int k = 0; k < num; k++) {
+        if (boids[k].numNeighbors > 0) {
+            boids[k].alignmentTargetPos[0] = boids[k].pos[0] + cos(boids[k].sumNeighborTheta/boids[k].numNeighbors);
+            boids[k].alignmentTargetPos[1] = boids[k].pos[1] - sin(boids[k].sumNeighborTheta/boids[k].numNeighbors);
+        } else {
+            boids[k].alignmentTargetPos[0] = boids[k].pos[0];
+            boids[k].alignmentTargetPos[1] = boids[k].pos[1];
+        }
+    }
+
+
+
+
+    //end
     for (int k = 0; k < num; k++)
         boids[k].update();
 
