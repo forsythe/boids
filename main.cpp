@@ -20,7 +20,6 @@ void update() {
 }
 
 
-
 int main(int argc, char *argv[]) {
     CSDLManagerLite::getInstance()->initializeSDL(WIDTH, HEIGHT, TITLE);
 

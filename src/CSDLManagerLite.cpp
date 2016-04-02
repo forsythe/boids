@@ -24,8 +24,8 @@ int CSDLManagerLite::initializeSDL(int width, int height, const std::string & ti
 
     m_pWindow =      SDL_CreateWindow(
                          title.c_str(),                  // window title
-                         SDL_WINDOWPOS_UNDEFINED,           // initial x position
-                         SDL_WINDOWPOS_UNDEFINED,           // initial y position
+                         20,           // initial x position
+                         20,           // initial y position
                          width,                               // width, in pixels
                          height,                               // height, in pixels
                          SDL_WINDOW_OPENGL
