@@ -15,8 +15,8 @@ Boid::Boid(float x, float y) {
 }
 
 Boid::Boid() {
-    pos[0] = rand()%WIDTH;
-    pos[1] = rand()%HEIGHT;
+    pos[0] = rand()%100+WIDTH/2;
+    pos[1] = rand()%100+HEIGHT/2;
     vel[0] = (100-(rand()%200))/100.0;
     vel[1] = (100-(rand()%200))/100.0;
 }
@@ -35,9 +35,10 @@ void Boid::draw() {
         CSDLManagerLite::getInstance() -> drawCircle(separationTargetPos[0], separationTargetPos[1], 10);
         CSDLManagerLite::getInstance() -> drawLine(pos[0], pos[1], separationTargetPos[0], separationTargetPos[1]);
 
-        }
         CSDLManagerLite::getInstance() -> drawCircle(alignmentTargetPos[0], alignmentTargetPos[1], 10);
         CSDLManagerLite::getInstance() -> drawLine(pos[0], pos[1], alignmentTargetPos[0], alignmentTargetPos[1]);
+    }
+
 
 }
 

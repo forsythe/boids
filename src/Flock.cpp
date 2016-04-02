@@ -84,7 +84,7 @@ void Flock::update() {
         boids[k].sumNeighborTheta = 0;
     }
 
-     for (int k = 0; k < num; k++) {
+    for (int k = 0; k < num; k++) {
         for (int j = k + 1; j < num; j++) {
             if (getDist(boids[k], boids[j]) < BOID_RADIUS) {
                 boids[k].numNeighbors++;
